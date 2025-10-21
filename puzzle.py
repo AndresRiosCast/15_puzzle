@@ -55,65 +55,106 @@ def movimiento(matriz,movimiento):
                         if u-1>-1:
                             matriz[i][u],matriz[i][u-1]=matriz[i][u-1], matriz[i][u]                           
                 return matriz
+            
+def movimientos(event,matriz):
+    posicion_cero = []
+    limite = len(matriz)
+    
+    for fila in range(len(matriz)):
+        for columna in range(len(matriz[fila])):
+            if matriz[fila][columna][0]==0:
+                posicion_cero = [fila,columna]
 
+    if event.type == pygame.KEYDOWN:  
+        if event.key == pygame.K_w:
+            if posicion_cero[0]==0:
+                print("No se puede subir más")                
+            else:
+                matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]-1][posicion_cero[1]] = matriz[posicion_cero[0]-1][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]]
+                print("Acabas de subir")
+                
+        if event.key == pygame.K_a:
+            if posicion_cero[1]==0:
+                print("No se puede ir mas al la izquierda")                
+            else:
+                matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]-1] = matriz[posicion_cero[0]][posicion_cero[1]-1],matriz[posicion_cero[0]][posicion_cero[1]]
+                print("Acabas de ir a la izquierda")
+              
+        if event.key == pygame.K_d:
+            print("Presionaste S")
+            if posicion_cero[1]==limite-1:
+                print("No se puede ir mas al la derecha")                
+            else:
+                matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]+1] = matriz[posicion_cero[0]][posicion_cero[1]+1],matriz[posicion_cero[0]][posicion_cero[1]]
+                print("Acabas de ir a la derecha")
+ 
+        if event.key == pygame.K_s:
+            print("Presionaste D")
+            if posicion_cero[0]==limite-1:
+                print("No se puede bajar más")                
+            else:
+                matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]+1][posicion_cero[1]] = matriz[posicion_cero[0]+1][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]]
+                print("Acabas de bajar")
+                
 def main():
 
-    #Zonas de la interface
-    panel_superior = pygame.Surface((1000,150))
-    panel_lateral_derecho = pygame.Surface((200,850))
-    panel_tablero = pygame.Surface((800,800))
+        #Zonas de la interface
+        panel_superior = pygame.Surface((1000,150))
+        panel_lateral_derecho = pygame.Surface((200,850))
+        panel_tablero = pygame.Surface((800,800))
 
-    #Colores
-    GRIS = (50, 50, 50)
-    AZUL = (0, 100, 255)
-    BLANCO = (255,255,255)
-    ROJO = (255, 0, 0)  # Nuevo color para destacar la celda
+        #Colores
+        GRIS = (50, 50, 50)
+        AZUL = (0, 100, 255)
+        BLANCO = (255,255,255)
+        ROJO = (255, 0, 0)  # Nuevo color para destacar la celda
 
-    #Variables
-    tamaño = 4  # Tamaño fijo para pruebas (cambiar a input si quieres)
-    matriz,matriz_solucion = crear_matriz(tamaño,panel_tablero)
+        #Variables
+        tamaño = 4  # Tamaño fijo para pruebas (cambiar a input si quieres)
+        matriz,matriz_solucion = crear_matriz(tamaño,panel_tablero)
 
-    #Inicio interface grafica 
-    ventan = pygame.display.set_mode((1000,1000))
-    pygame.display.set_caption("Mi 15 PUZZLE")
-    juego_activo=True
+        #Inicio interface grafica 
+        ventan = pygame.display.set_mode((1000,1000))
+        pygame.display.set_caption("Mi 15 PUZZLE")
+        juego_activo=True
 
-    #Coloreo
-    panel_superior.fill(GRIS)
-    panel_lateral_derecho.fill(AZUL)
-    panel_tablero.fill(BLANCO)
+        #Coloreo
+        panel_superior.fill(GRIS)
+        panel_lateral_derecho.fill(AZUL)
+        panel_tablero.fill(BLANCO)
 
-    #Asignacion de surfaces (zonas) a la ventana principal
-    ventan.blit(panel_superior,(0,0))
-    ventan.blit(panel_lateral_derecho,(800,150))
-    ventan.blit(panel_tablero,(0,200))
+        #Asignacion de surfaces (zonas) a la ventana principal
+        ventan.blit(panel_superior,(0,0))
+        ventan.blit(panel_lateral_derecho,(800,150))
+        ventan.blit(panel_tablero,(0,200))
 
-    fuente = pygame.font.Font(None,80)
+        fuente = pygame.font.Font(None,80)
 
-    ancho , alto = matriz[0][0][1].get_size() #saca el ancho y alto de un surface del tablero ya que todos son del mismo tamaño
+        ancho , alto = matriz[0][0][1].get_size() #saca el ancho y alto de un surface del tablero ya que todos son del mismo tamaño
 
-    ventan.blit(matriz[0][0][1],(0,200))
+        ventan.blit(matriz[0][0][1],(0,200))
 
-    #Bucle de juego
-    while juego_activo:
-        for event in pygame.event.get():
-            if event.type ==pygame.QUIT:
-                juego_activo=False
+        #Bucle de juego
+        while juego_activo:
+            for event in pygame.event.get():
+                movimientos(event,matriz)
+                if event.type ==pygame.QUIT:
+                    juego_activo=False
 
-        for fila in range(len(matriz)):
-            for columna in range(len(matriz)):
-                if matriz[fila][columna][0]==0:
-                    matriz[fila][columna][1].fill(GRIS)
-                else:
-                    matriz[fila][columna][1].fill(ROJO)
+            for fila in range(len(matriz)):
+                for columna in range(len(matriz)):
+                    if matriz[fila][columna][0]==0:
+                        matriz[fila][columna][1].fill(GRIS)
+                    else:
+                        matriz[fila][columna][1].fill(ROJO)
 
-                texto = fuente.render(str(matriz[fila][columna][0]), True, (255, 255, 255))  # blanco
-                rect_texto = texto.get_rect(center=(ancho // 2, alto // 2))
-                matriz[fila][columna][1].blit(texto, rect_texto)
-                pygame.draw.rect(matriz[fila][columna][1], (0,0,0), (0, 0, ancho, alto), 4)
-                ventan.blit(matriz[fila][columna][1], (columna * ancho, fila * alto + 200))
+                    texto = fuente.render(str(matriz[fila][columna][0]), True, (255, 255, 255))  # blanco
+                    rect_texto = texto.get_rect(center=(ancho // 2, alto // 2))
+                    matriz[fila][columna][1].blit(texto, rect_texto)
+                    pygame.draw.rect(matriz[fila][columna][1], (0,0,0), (0, 0, ancho, alto), 4)
+                    ventan.blit(matriz[fila][columna][1], (columna * ancho, fila * alto + 200))
 
-        pygame.display.flip()
-    pygame.quit()
+            pygame.display.flip()
+        pygame.quit()
 
 main()
