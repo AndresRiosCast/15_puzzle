@@ -57,6 +57,7 @@ def movimiento(matriz,movimiento):
                 return matriz
             
 def movimientos(event,matriz):
+    contador = 0
     posicion_cero = []
     limite = len(matriz)
     
@@ -66,40 +67,32 @@ def movimientos(event,matriz):
                 posicion_cero = [fila,columna]
 
     if event.type == pygame.KEYDOWN:  
-        if event.key == pygame.K_w:
-            if posicion_cero[0]==0:
-                print("No se puede subir más")                
-            else:
+        if event.key == pygame.K_w or event.key == pygame.K_UP:#Tecla W y felcha arriba 
+            if not posicion_cero[0]==0:
                 matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]-1][posicion_cero[1]] = matriz[posicion_cero[0]-1][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]]
-                print("Acabas de subir")
-                
-        if event.key == pygame.K_a:
-            if posicion_cero[1]==0:
-                print("No se puede ir mas al la izquierda")                
-            else:
+                contador = contador+1
+                  
+        if event.key == pygame.K_a or event.key == pygame.K_LEFT:#Tecla A y flecha izquierda
+            if not posicion_cero[1]==0:
                 matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]-1] = matriz[posicion_cero[0]][posicion_cero[1]-1],matriz[posicion_cero[0]][posicion_cero[1]]
-                print("Acabas de ir a la izquierda")
-              
-        if event.key == pygame.K_d:
-            print("Presionaste S")
-            if posicion_cero[1]==limite-1:
-                print("No se puede ir mas al la derecha")                
-            else:
+                contador = contador+1
+                
+        if event.key == pygame.K_d or event.key == pygame.K_RIGHT:#Tecla D y flecha derecha
+            if not posicion_cero[1]==limite-1:
                 matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]+1] = matriz[posicion_cero[0]][posicion_cero[1]+1],matriz[posicion_cero[0]][posicion_cero[1]]
-                print("Acabas de ir a la derecha")
- 
-        if event.key == pygame.K_s:
-            print("Presionaste D")
-            if posicion_cero[0]==limite-1:
-                print("No se puede bajar más")                
-            else:
+                contador = contador+1
+                    
+        if event.key == pygame.K_s or event.key == pygame.K_DOWN: #Tecla S y flecha abajo
+            if not posicion_cero[0]==limite-1:
                 matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]+1][posicion_cero[1]] = matriz[posicion_cero[0]+1][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]]
-                print("Acabas de bajar")
+                contador = contador+1
+    return contador            
+        
                 
 def main():
-
+        
         #Zonas de la interface
-        panel_superior = pygame.Surface((1000,150))
+        panel_superior = pygame.Surface((1000,200))
         panel_lateral_derecho = pygame.Surface((200,850))
         panel_tablero = pygame.Surface((800,800))
 
@@ -107,8 +100,8 @@ def main():
         GRIS = (50, 50, 50)
         AZUL = (0, 100, 255)
         BLANCO = (255,255,255)
-        ROJO = (255, 0, 0)  # Nuevo color para destacar la celda
-
+        ROJO = (255, 0, 0)  
+        
         #Variables
         tamaño = 4  # Tamaño fijo para pruebas (cambiar a input si quieres)
         matriz,matriz_solucion = crear_matriz(tamaño,panel_tablero)
@@ -125,19 +118,20 @@ def main():
 
         #Asignacion de surfaces (zonas) a la ventana principal
         ventan.blit(panel_superior,(0,0))
-        ventan.blit(panel_lateral_derecho,(800,150))
+        ventan.blit(panel_lateral_derecho,(800,205))
         ventan.blit(panel_tablero,(0,200))
 
         fuente = pygame.font.Font(None,80)
 
         ancho , alto = matriz[0][0][1].get_size() #saca el ancho y alto de un surface del tablero ya que todos son del mismo tamaño
 
-        ventan.blit(matriz[0][0][1],(0,200))
+        contador_uno = 0
 
         #Bucle de juego
         while juego_activo:
             for event in pygame.event.get():
-                movimientos(event,matriz)
+                if event.type == pygame.KEYDOWN:
+                    contador_uno += movimientos(event,matriz)
                 if event.type ==pygame.QUIT:
                     juego_activo=False
 
@@ -153,6 +147,12 @@ def main():
                     matriz[fila][columna][1].blit(texto, rect_texto)
                     pygame.draw.rect(matriz[fila][columna][1], (0,0,0), (0, 0, ancho, alto), 4)
                     ventan.blit(matriz[fila][columna][1], (columna * ancho, fila * alto + 200))
+
+            #Contador
+            ventan.blit(panel_superior,(0,0))
+            Contador = fuente.render("Movimientos: " + str(contador_uno), True, (255, 255, 255))  # blanco
+            Contador_a = Contador.get_rect(center=(250, alto // 2))
+            ventan.blit(Contador, Contador_a)
 
             pygame.display.flip()
         pygame.quit()
