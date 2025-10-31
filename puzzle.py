@@ -3,14 +3,14 @@ import pygame
 
 pygame.init()
 
-def crear_matriz (tamaño,zona_juego): #Resive un tamaño de matriz la crea y la organiza aleatoreamente
+def crear_matriz (tamaño,hoja_tablero): 
 
-    ancho,alto = zona_juego.get_size() #optiene el ancho y alto del cuadro del Surface 
-    tamaño_celda = int(ancho / tamaño) #reparte el tamaño de las celdas dividiendo el tamaño del tablero por la cantidad de celdas 
+    ancho,alto = hoja_tablero.get_size() 
+    tamaño_celda = int(ancho / tamaño)
     matriz = [] 
     contador = 0
 
-    for i in range(tamaño): #Ingresa en la matriz del tablero filas, columnas, valor y surface
+    for i in range(tamaño): #crea la matriz tablero 
         filas = []  
         for u in range(tamaño):
             columna = []
@@ -25,9 +25,9 @@ def crear_matriz (tamaño,zona_juego): #Resive un tamaño de matriz la crea y la
             filas.append(columna)
         matriz.append(filas)
 
-    matriz_solucion = [fila[:] for fila in matriz] #Hace una copia de la matriz 
+    matriz_solucion = [fila[:] for fila in matriz] #Crea una compia del tablero cuando esta resuelto
 
-    for i in matriz: #Organiza de forma aleatorea la matriz 
+    for i in matriz: #Desorganiza el tablero
         random.shuffle(i)
     random.shuffle(matriz)
     
@@ -87,14 +87,12 @@ def movimientos(event,matriz):
                 matriz[posicion_cero[0]][posicion_cero[1]],matriz[posicion_cero[0]+1][posicion_cero[1]] = matriz[posicion_cero[0]+1][posicion_cero[1]],matriz[posicion_cero[0]][posicion_cero[1]]
                 contador = contador+1
     return contador            
-        
-                
+              
 def main():
-        
-        #Zonas de la interface
-        panel_superior = pygame.Surface((1000,200))
-        panel_lateral_derecho = pygame.Surface((200,850))
-        panel_tablero = pygame.Surface((800,800))
+        #Inicio interface grafica 
+        ventana = pygame.display.set_mode((800,1000))
+        pygame.display.set_caption("Mi 15 PUZZLE")
+        juego_activo=True
 
         #Colores
         GRIS = (50, 50, 50)
@@ -102,37 +100,47 @@ def main():
         BLANCO = (255,255,255)
         ROJO = (255, 0, 0)  
         
-        #Variables
-        tamaño = 4  # Tamaño fijo para pruebas (cambiar a input si quieres)
-        matriz,matriz_solucion = crear_matriz(tamaño,panel_tablero)
-
-        #Inicio interface grafica 
-        ventan = pygame.display.set_mode((1000,1000))
-        pygame.display.set_caption("Mi 15 PUZZLE")
-        juego_activo=True
-
+        #Zonas de la interface
+        hoja_superior = pygame.Surface((1000,200))
+        # hoja_derecha = pygame.Surface((200,850))
+        hoja_tablero = pygame.Surface((800,800))
+        hoja_ganador = pygame.Surface((800,800), pygame.SRCALPHA) #hoja_ganador de color para efecto 
+        
         #Coloreo
-        panel_superior.fill(GRIS)
-        panel_lateral_derecho.fill(AZUL)
-        panel_tablero.fill(BLANCO)
+        hoja_superior.fill(GRIS)
+        # hoja_derecha.fill(AZUL)
+        hoja_tablero.fill(BLANCO)
+        hoja_ganador.fill((0, 0, 255, 128)) #Azul transparente
 
         #Asignacion de surfaces (zonas) a la ventana principal
-        ventan.blit(panel_superior,(0,0))
-        ventan.blit(panel_lateral_derecho,(800,205))
-        ventan.blit(panel_tablero,(0,200))
-
+        ventana.blit(hoja_superior,(0,0))
+        # ventana.blit(hoja_derecha,(800,205))
+        ventana.blit(hoja_tablero,(0,200))
+        
+        #Fuentes de numeros_tablero
         fuente = pygame.font.Font(None,80)
+        fuente2= pygame.font.Font(None,40)
 
-        ancho , alto = matriz[0][0][1].get_size() #saca el ancho y alto de un surface del tablero ya que todos son del mismo tamaño
+        #textos 
+        texto_ganador = fuente.render("Tablero RESUELTO!!",True,(255,255,255))
 
+        #Centrado de textos
+        texto_ganador_centrado = texto_ganador.get_rect(center=(400,400))
+
+        #variables utiles
         contador_uno = 0
+
+        #Variables
+        tamaño = 2 # Tamaño fijo para pruebas (cambiar a input si quieres) (mayor que 3 menor que 11)
+        matriz,matriz_solucion = crear_matriz(tamaño,hoja_tablero)
+        ancho, alto = matriz[0][0][1].get_size() #saca el ancho y alto de un surface del tablero ya que todos son del mismo tamaño
 
         #Bucle de juego
         while juego_activo:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     contador_uno += movimientos(event,matriz)
-                if event.type ==pygame.QUIT:
+                if event.type == pygame.QUIT:
                     juego_activo=False
 
             for fila in range(len(matriz)):
@@ -142,19 +150,23 @@ def main():
                     else:
                         matriz[fila][columna][1].fill(ROJO)
 
-                    texto = fuente.render(str(matriz[fila][columna][0]), True, (255, 255, 255))  # blanco
-                    rect_texto = texto.get_rect(center=(ancho // 2, alto // 2))
-                    matriz[fila][columna][1].blit(texto, rect_texto)
+                    numeros_tablero = fuente.render(str(matriz[fila][columna][0]), True, (255, 255, 255))  # blanco
+                    rect_numeros_tablero = numeros_tablero.get_rect(center=(ancho // 2, alto // 2))
+                    matriz[fila][columna][1].blit(numeros_tablero, rect_numeros_tablero)
                     pygame.draw.rect(matriz[fila][columna][1], (0,0,0), (0, 0, ancho, alto), 4)
-                    ventan.blit(matriz[fila][columna][1], (columna * ancho, fila * alto + 200))
+                    ventana.blit(matriz[fila][columna][1], (columna * ancho, fila * alto + 200))
 
             #Contador
-            ventan.blit(panel_superior,(0,0))
-            Contador = fuente.render("Movimientos: " + str(contador_uno), True, (255, 255, 255))  # blanco
-            Contador_a = Contador.get_rect(center=(250, alto // 2))
-            ventan.blit(Contador, Contador_a)
+            ventana.blit(hoja_superior,(0,0))
+            Contador = fuente2.render("Movimientos: " + str(contador_uno), True, (255, 255, 255))  # blanco
+            Contador_a = Contador.get_rect(center=(110,20 ))
+            ventana.blit(Contador, Contador_a)
 
+            if matriz == matriz_solucion:
+                print("Lo lograste!")
+                hoja_ganador.blit(texto_ganador,texto_ganador_centrado)
+                ventana.blit(hoja_ganador,(0,200))
+                
             pygame.display.flip()
         pygame.quit()
-
 main()
