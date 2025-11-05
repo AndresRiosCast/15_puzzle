@@ -4,10 +4,6 @@ from movimientos import *
                   
 def main():
 
-    
-    #Carga la imagen
-    imagen = pygame.image.load("imagenes/gato.jpg")
-
     #Inicio interface grafica 
     ventana = pygame.display.set_mode((800,1000))
     pygame.display.set_caption("Mi 15 PUZZLE")
@@ -15,8 +11,6 @@ def main():
 
     #Colores
     GRIS = (50, 50, 50)
-    BLANCO = (255,255,255)
-    ROJO = (255, 0, 0)  
 
     #Zonas de la interface
     hoja_superior = pygame.Surface((1000,200))
@@ -46,7 +40,7 @@ def main():
     contador_uno = 0
 
     #Variables
-    tamaño = 4 # Tamaño fijo para pruebas (cambiar a input si quieres) (mayor que 3 menor que 11)
+    tamaño = 3 # Tamaño fijo para pruebas (cambiar a input si quieres) (mayor que 3 menor que 11)
     matriz,matriz_solucion = crear_matriz(tamaño,hoja_tablero)
     ancho, alto = matriz[0][0][1].get_size() #saca el ancho y alto de un surface del tablero ya que todos son del mismo tamaño
 
@@ -60,15 +54,7 @@ def main():
                 juego_activo=False
 
         for fila in range(len(matriz)):
-
             for columna in range(len(matriz)):
-
-                tite0 = imagen.subsurface(pygame.Rect(fila*ancho,columna*ancho,ancho,ancho))
-                if matriz[fila][columna][0]==0:
-                    matriz[fila][columna][1].fill(GRIS)
-                else:
-                    matriz[fila][columna][1].blit(tite0,(0,0))
-
                 ventana.blit(matriz[fila][columna][1], (columna * ancho, fila * alto + 200))
 
         #Contador
