@@ -1,26 +1,30 @@
 import pygame
+import sys
 from matriz import *
 from movimientos import *        
-                  
-def main():
 
-    #Inicio interface grafica 
-    ventana = pygame.display.set_mode((800,1000))
-    pygame.display.set_caption("Mi 15 PUZZLE")
-    juego_activo=True
+#Inicio interface grafica 
+ventana = pygame.display.set_mode((800,1000))
+pygame.display.set_caption("Mi 15 PUZZLE")
 
-    #Colores
-    GRIS = (50, 50, 50)
+#Colores
+GRIS = (50, 50, 50)
+ROJO = (245,0,0)
+AZUL_TRASNSPARENTE = (0, 0, 255, 128)
 
-    #Zonas de la interface
+#Estados
+estado_juego = "inicio"
+
+def main_juego():
+
+    #Zonas de la interface de juego
     hoja_superior = pygame.Surface((1000,200))
     hoja_tablero = pygame.Surface((800,800))
     hoja_ganador = pygame.Surface((800,800), pygame.SRCALPHA) #hoja_ganador de color para efecto 
 
     #Coloreo
     hoja_superior.fill(GRIS)
-    # hoja_tablero.fill(BLANCO)
-    hoja_ganador.fill((0, 0, 255, 128)) #Azul transparente
+    hoja_ganador.fill(AZUL_TRASNSPARENTE)
 
     #Asignacion de surfaces (zonas) a la ventana principal
     ventana.blit(hoja_superior,(0,0))
@@ -44,14 +48,15 @@ def main():
     matriz,matriz_solucion = crear_matriz(tamaño,hoja_tablero)
     ancho, alto = matriz[0][0][1].get_size() #saca el ancho y alto de un surface del tablero ya que todos son del mismo tamaño
 
+    juego_activo=True
     #Bucle de juego
     while juego_activo:
-        
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 contador_uno += movimientos(event,matriz)
             if event.type == pygame.QUIT:
                 juego_activo=False
+                sys.exit()
 
         for fila in range(len(matriz)):
             for columna in range(len(matriz)):
@@ -66,7 +71,29 @@ def main():
         if matriz == matriz_solucion: #Cuando Gana
             hoja_ganador.blit(texto_ganador,texto_ganador_centrado)
             ventana.blit(hoja_ganador,(0,200))
-            
-        pygame.display.flip()
+    
+        pygame.display.flip()        
     pygame.quit()
-main()
+
+def main_inicio():
+    vetanap = pygame.Surface((800,1000))
+    vetanap.fill(ROJO)
+    ventana.blit(vetanap,(0,0))
+    pygame.display.flip()
+    inicio=True
+    while inicio:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                inicio=False
+                sys.exit()
+        pygame.display.flip()  
+    pygame.quit()    
+        
+estados =True
+while estados:
+    
+    if estado_juego == "juego":
+        main_juego()
+    if estado_juego == "inicio":
+        main_inicio()
+    
