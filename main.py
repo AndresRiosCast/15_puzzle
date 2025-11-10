@@ -76,9 +76,38 @@ def main_juego():
     pygame.quit()
 
 def main_inicio():
+    global estado_juego
+
+    #constantes
+    PUNTO_X_CUADRO = 250
+    PUNTO_Y_CUADRO = 363
+
+    #...
+    texto_nombre = ""
+    texto_contraseña = ""
+
+    #Estados
+    estado_cuadro_nombre = False
+    estado_cuadro_contraseña = False
+
+    #Fuentes
+    fuente = pygame.font.Font(None,40)
+
+    #Surface
     vetanap = pygame.Surface((800,1000))
     vetanap.fill(ROJO)
     ventana.blit(vetanap,(0,0))
+
+    #Cuadros de entrada de datos 
+    cuadro_nombre = pygame.Rect(PUNTO_X_CUADRO,PUNTO_Y_CUADRO,300,75)
+    cuadro_contraseña = pygame.Rect (PUNTO_X_CUADRO,PUNTO_Y_CUADRO+100,300,75)
+    cuadro_boton_ingreso = pygame.Rect (PUNTO_X_CUADRO+50,PUNTO_Y_CUADRO+200,200,60)
+
+    #Dibuja los cuadros 
+    pygame.draw.rect(ventana,(255,255,255),cuadro_nombre)
+    pygame.draw.rect(ventana,(255,255,255),cuadro_contraseña)
+    pygame.draw.rect(ventana,(50,255,0),cuadro_boton_ingreso)
+
     pygame.display.flip()
     inicio=True
     while inicio:
@@ -86,8 +115,55 @@ def main_inicio():
             if event.type == pygame.QUIT:
                 inicio=False
                 sys.exit()
-        pygame.display.flip()  
-    pygame.quit()    
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if cuadro_nombre.collidepoint(event.pos):
+                    estado_cuadro_nombre = True
+                    #Agregar algo como cambio de color...
+                else:
+                    estado_cuadro_nombre  = False   
+
+                if cuadro_contraseña.collidepoint(event.pos):
+                    estado_cuadro_contraseña = True
+                    #Agregar algo como cambio de color...
+                else:
+                    estado_cuadro_contraseña  = False 
+
+                if cuadro_boton_ingreso.collidepoint(event.pos):
+                    estado_juego = "juego"
+                    inicio = False
+                    break
+
+            if event.type == pygame.KEYDOWN and estado_cuadro_nombre:
+                if event.key == pygame.K_RETURN:
+                    None
+                    #modificar este apartado para los usuarios y contraseñas 
+                elif event.key == pygame.K_BACKSPACE:
+                    texto_nombre = texto_nombre[:-1]
+                    #modificar este apartado para los usuarios y contraseñas 
+                else:
+                    texto_nombre += event.unicode
+
+            if event.type == pygame.KEYDOWN and estado_cuadro_contraseña:
+                if event.key == pygame.K_RETURN:
+                    None
+                    #modificar este apartado para los usuarios y contraseñas 
+                elif event.key == pygame.K_BACKSPACE:
+                    texto_contraseña = texto_contraseña[:-1]
+                    #modificar este apartado para los usuarios y contraseñas 
+                else: 
+                    texto_contraseña += event.unicode
+
+        pygame.draw.rect(ventana,(255,255,255),cuadro_nombre)
+        pygame.draw.rect(ventana,(255,255,255),cuadro_contraseña)
+
+        texto_nombre_surface = fuente.render(texto_nombre,True,(0,0,0))
+        ventana.blit(texto_nombre_surface,(PUNTO_X_CUADRO,PUNTO_Y_CUADRO))  
+
+        texto_contraseña_surface = fuente.render(texto_contraseña,True,(0,0,0)) 
+        ventana.blit(texto_contraseña_surface,(PUNTO_X_CUADRO,PUNTO_Y_CUADRO+100))
+
+        pygame.display.flip()     
         
 estados =True
 while estados:
@@ -96,4 +172,4 @@ while estados:
         main_juego()
     if estado_juego == "inicio":
         main_inicio()
-    
+   
