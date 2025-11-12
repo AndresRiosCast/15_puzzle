@@ -2,6 +2,7 @@ import pygame
 import sys
 from matriz import *
 from movimientos import *
+from database import *
 
 ancho_ventana = 800
 alto_ventana = 1000
@@ -144,9 +145,12 @@ def main_inicio():
                     estado_cuadro_contraseña  = False 
 
                 if cuadro_boton_ingreso.collidepoint(event.pos):
-                    estado_juego = "juego"
-                    inicio = False
-                    break
+                    if comprobar_contraseña(texto_nombre,texto_contraseña):
+                        estado_juego = "juego"
+                        inicio = False
+                        break
+                    else:
+                        print("Hay algo mal")
 
                 if cuadro_boton_registro.collidepoint(event.pos):
                     print("cambio a registro")
@@ -261,9 +265,11 @@ def main_registro():
                     estado_confirmar = False
 
                 if cuadro_boton_registro.collidepoint(event.pos):
-                    estado_juego = "inicio"
-                    algo = False 
-                    break
+                    if (texto_nombre != "" and texto_contraseña !="" and texto_confirmar != "") and (texto_contraseña == texto_confirmar):
+                        registrar_usuario(texto_nombre,texto_confirmar)
+                        estado_juego = "inicio"
+                        algo = False 
+                        break
                     
                     #decidir si hacer que regrese al inicio e ingrege el usuario nuevamente desde este boton o hacer que solo guarde los datos
                     #en la base de datos y que desde otro boton regrese al inicio
