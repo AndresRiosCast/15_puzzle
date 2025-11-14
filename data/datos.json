@@ -2,11 +2,29 @@
     "usuarios": [
         {
             "usuario": "Andres",
-            "contrasena": "Hola123"
+            "contrasena": "Hola123",
+            "puntos": [
+                {
+                    "nivel_1": 0,
+                    "nivel_2": 0,
+                    "nivel_3": 0
+                }
+            ]
         },
         {
             "usuario": "Felipe",
-            "contrasena": "Adios123"
+            "contrasena": "Adios123",
+            "puntos": [
+                {
+                    "nivel_1": 0,
+                    "nivel_2": 0,
+                    "nivel_3": 0
+                }
+            ]
+        },
+        {
+            "usuario": "a",
+            "contrasena": "a"
         }
     ]
 }

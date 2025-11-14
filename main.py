@@ -9,7 +9,7 @@ alto_ventana = 1000
 
 #Inicio interface grafica 
 ventana = pygame.display.set_mode((ancho_ventana,alto_ventana))
-pygame.display.set_caption("Mi 15 PUZZLE")
+pygame.display.set_caption("15 PUZZLE")
 
 #Colores
 GRIS = (50, 50, 50)
@@ -22,6 +22,7 @@ estado_juego = "inicio"
 def main_juego():
 
     #Zonas de la interface de juego
+    hoja_vista_previa = pygame.Surface((200,200))
     hoja_superior = pygame.Surface((1000,200))
     hoja_tablero = pygame.Surface((800,800))
     hoja_ganador = pygame.Surface((800,800), pygame.SRCALPHA) #hoja_ganador de color para efecto 
@@ -30,9 +31,12 @@ def main_juego():
     hoja_superior.fill(GRIS)
     hoja_ganador.fill(AZUL_TRASNSPARENTE)
 
+    hoja_vista_previa.blit(agregar_imagen([],True),(0,0))
+
     #Asignacion de surfaces (zonas) a la ventana principal
     ventana.blit(hoja_superior,(0,0))
     ventana.blit(hoja_tablero,(0,200))
+    ventana.blit(hoja_vista_previa,(0,0))
 
     #Fuentes de numeros_tablero
     fuente = pygame.font.Font(None,80)
@@ -68,8 +72,9 @@ def main_juego():
 
         #Contador
         ventana.blit(hoja_superior,(0,0))
-        Contador = fuente2.render("Movimientos: " + str(contador_uno), True, (255, 255, 255))  # blanco
-        Contador_a = Contador.get_rect(center=(110,20 ))
+        ventana.blit(hoja_vista_previa,(600,0))
+        Contador = fuente2.render("Movimientos: " + str(contador_uno), True, (255, 255, 255))
+        Contador_a = Contador.get_rect(center=(110,20))
         ventana.blit(Contador, Contador_a)
 
         if matriz == matriz_solucion: #Cuando Gana
@@ -160,7 +165,7 @@ def main_inicio():
 
             if (event.type == pygame.KEYDOWN) and (estado_cuadro_nombre):
                 if event.key == pygame.K_RETURN:
-                    None
+                    pass
                     #modificar este apartado para los usuarios y contraseñas 
                 elif event.key == pygame.K_BACKSPACE:
                     texto_nombre = texto_nombre[:-1]
@@ -170,7 +175,7 @@ def main_inicio():
 
             if (event.type == pygame.KEYDOWN) and (estado_cuadro_contraseña):
                 if event.key == pygame.K_RETURN:
-                    None
+                    pass
                     #modificar este apartado para los usuarios y contraseñas 
                 elif event.key == pygame.K_BACKSPACE:
                     texto_contraseña = texto_contraseña[:-1]
@@ -197,7 +202,8 @@ def main_inicio():
         ingrese_contraseña_surface = fuente.render(ingrese_contraseña,True,(0,0,0)) 
         ventana.blit(ingrese_contraseña_surface,(PUNTO_X_CUADRO,PUNTO_Y_CUADRO+100))
 
-        pygame.display.flip()     
+        pygame.display.flip()   
+    #pygame.quit()
 
 def main_registro():
     global estado_juego
@@ -212,6 +218,7 @@ def main_registro():
     cuadro_contraseña_resgistro = pygame.Rect(250,475,300,50)
     cuadro_contraseña_resgistro_confirmar =pygame.Rect(250,575,300,50)
     cuadro_boton_registro = pygame.Rect(255,675,290,25)
+    cuadro_regreso = pygame.Rect(740,10,50,50)
 
     fuente = pygame.font.Font(None,40)
 
@@ -226,6 +233,7 @@ def main_registro():
     estado_contraseña = False
     estado_confirmar = False
 
+    pygame.draw.rect(ventana,(255,255,255),cuadro_regreso)
     pygame.draw.rect(ventana,(255,255,255),cuadro_nombre_registro)
     pygame.draw.rect(ventana,(255,255,255),cuadro_contraseña_resgistro)
     pygame.draw.rect(ventana,(255,255,255),cuadro_contraseña_resgistro_confirmar)
@@ -270,9 +278,11 @@ def main_registro():
                         estado_juego = "inicio"
                         algo = False 
                         break
-                    
-                    #decidir si hacer que regrese al inicio e ingrege el usuario nuevamente desde este boton o hacer que solo guarde los datos
-                    #en la base de datos y que desde otro boton regrese al inicio
+
+                if cuadro_regreso.collidepoint(event.pos):
+                    estado_juego = "inicio"
+                    algo = False 
+                    break
             
             if (event.type == pygame.KEYDOWN) and (estado_nombre):
                 if event.key == pygame.K_RETURN:
@@ -299,6 +309,8 @@ def main_registro():
                     texto_confirmar += event.unicode
 
         ventana.blit(fondo,(0,0))
+
+        pygame.draw.rect(ventana,(21,213,123),cuadro_regreso)
         pygame.draw.rect(ventana,(255,255,255),cuadro_nombre_registro)
         pygame.draw.rect(ventana,(255,255,255),cuadro_contraseña_resgistro)
         pygame.draw.rect(ventana,(255,255,255),cuadro_contraseña_resgistro_confirmar)
@@ -323,7 +335,29 @@ def main_registro():
         ventana.blit(confirme_contraseña_surface,(250,575))
 
         pygame.display.flip() 
-    pygame.QUIT 
+    #pygame.quit()
+
+def main_configuracion():
+    fondo = pygame.Surface((800,1000), pygame.SRCALPHA)
+
+    #Colores
+    MORADO = (190,0,255,200)
+
+    fondo.fill(MORADO)
+
+    ventana.blit(fondo,(0,0))
+
+    configuracion=True
+    while configuracion == True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                configuracion = False
+                sys.exit()
+                print("Hola")
+            # if event.type == pygame.MOUSEBUTTONDOWN:
+
+        pygame.display.flip()
+    pygame.display.exit()            
 
 estados =True
 while estados:
@@ -333,5 +367,7 @@ while estados:
     if estado_juego == "inicio":
         main_inicio()
     if estado_juego == "registro":
-        main_registro()    
+        main_registro()
+    if estado_juego == "configuracion":
+        main_configuracion()    
    

@@ -18,5 +18,3 @@ def registrar_usuario(usuario,contraseña):
 
     with open("data/datos.json","w") as base:
         json.dump(datos,base,indent=4)
-
-
